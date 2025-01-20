@@ -1,0 +1,17 @@
+name: Pensar Security Scan
+on: # Configure the events that this action should run on: 'push', 'pull_request'
+  push: 
+    branches: [test]  # Configure the branches the action should run on
+  pull_request:
+    branches: [test]
+jobs:
+  security-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run Pensar Security Scan
+        uses: pensarai/scan-action@main
+        with:
+          api-key: ${{ secrets.PENSAR_API_KEY }}
+          environment: "dev" 
+        id: pensar-scan 
