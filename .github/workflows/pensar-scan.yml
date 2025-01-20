@@ -1,7 +1,7 @@
 name: Pensar Security Scan
 on: # Configure the events that this action should run on: 'push', 'pull_request'
   pull_request:
-    branches: [test]
+    branches: [main]
 jobs:
   security-scan:
     runs-on: ubuntu-latest
