@@ -13,12 +13,11 @@ const pool = new Pool({
 });
 async function getUserById(userId: string): Promise<void> {
   try {
-    // Vulnerable SQL query: Directly concatenating user input into the query
-    const query = `SELECT * FROM users WHERE id = '${userId}';`;
-
+    // Use parameterized query to prevent SQL injection
+    const query = 'SELECT * FROM users WHERE id = $1';
     console.log("Executing query:", query);
 
-    const result = await pool.query(query);
+    const result = await pool.query(query, [userId]);
     console.log("User:", result.rows);
   } catch (error) {
     console.error("Error executing query:", error);
