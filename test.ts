@@ -1,14 +1,16 @@
 import { Pool } from "pg";
+import * as dotenv from 'dotenv';
+
+dotenv.config();
 
 // Example: PostgreSQL pool setup
 const pool = new Pool({
-  user: "your_username",
+  user: process.env.DB_USER,
   host: "localhost",
-  database: "your_database",
-  password: "your_password",
+  database: process.env.DB_NAME,
+  password: process.env.DB_PASSWORD,
   port: 5432,
 });
-
 async function getUserById(userId: string): Promise<void> {
   try {
     // Vulnerable SQL query: Directly concatenating user input into the query
