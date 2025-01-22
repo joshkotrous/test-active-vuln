@@ -41,13 +41,11 @@ app.post("/execute", (req, res) => {
   if (!validArgs) {
     return res.status(403).json({ error: "Command arguments not allowed" });
   }
-
-  // Execute command with explicit array to prevent injection
-  exec([baseCommand, ...args].join(' '), { shell: false }, (error, stdout, stderr) => {
+// Execute command with explicit array to prevent injection
+  exec(baseCommand, args, { shell: false }, (error, stdout, stderr) => {
     if (error) {
       console.error(`Execution error: ${error.message}`);
       return res.status(500).json({ error: "Command execution failed" });
-    }
 });
 
 // Start the server
