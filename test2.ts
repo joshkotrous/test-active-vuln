@@ -19,11 +19,9 @@ async function getUserById(userId: string): Promise<void> {
 
     const result = await pool.query(query, [userId]);
     console.log("User:", result.rows);
+console.log("User:", result.rows);
   } catch (error) {
-    console.error("Error executing query:", error);
+    console.error("Error executing database query");
   }
 }
-
-// Simulating an attacker providing malicious input
-const maliciousInput = "1'; DROP TABLE users; --";
 getUserById(maliciousInput);
