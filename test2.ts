@@ -15,15 +15,11 @@ async function getUserById(userId: string): Promise<void> {
   try {
     // Use parameterized query to prevent SQL injection
     const query = 'SELECT * FROM users WHERE id = $1';
-    console.log("Executing query:", query);
-
     const result = await pool.query(query, [userId]);
+    console.log("Query executed successfully");
     console.log("User:", result.rows);
   } catch (error) {
-    console.error("Error executing query:", error);
+    console.error("Error executing database query");
   }
 }
-
-// Simulating an attacker providing malicious input
-const maliciousInput = "1'; DROP TABLE users; --";
 getUserById(maliciousInput);
