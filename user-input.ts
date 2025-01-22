@@ -8,8 +8,8 @@ app.use(express.json());
 
 // Vulnerable endpoint
 app.post("/execute", (req, res) => {
- const { command } = req.body;
- const allowedCommands = ['ls', 'pwd', 'echo', 'date'];
+  const { command } = req.body;
+  const allowedCommands = ['ls', 'pwd', 'echo', 'date'];
   const allowedArgs = {
     'ls': ['-l', '-a', '-h', '-r'],
     'pwd': [],
@@ -17,10 +17,17 @@ app.post("/execute", (req, res) => {
     'date': ['+%Y-%m-%d', '+%H:%M:%S', '-u']
   };
 
-  // Split command and arguments
-  const parts = command.split(' ');
+  // Safely split command and arguments handling quotes and spaces
+  const parts = command.match(/[^\s"']+|"([^"]*)"|'([^']*)'/g)
+    ?.map(part => part.replace(/^['"]|['"]$/g, '')) || [];
+
   const baseCommand = parts[0];
   const args = parts.slice(1);
+
+  // Validate command exists and is a string
+  if (!command || typeof command !== 'string') {
+    return res.status(400).json({ error: "Invalid command format" });
+  }
 
   // Validate if the command is in the allowed list
   if (!allowedCommands.includes(baseCommand)) {
@@ -28,22 +35,19 @@ app.post("/execute", (req, res) => {
   }
 
   // Validate all arguments
-  if (!args.every(arg => allowedArgs[baseCommand].includes(arg))) {
+  const validArgs = args.length === 0 || args.every(arg =>
+    allowedArgs[baseCommand].includes(arg) && typeof arg === 'string'
+  );
+  if (!validArgs) {
     return res.status(403).json({ error: "Command arguments not allowed" });
   }
 
-  // Execute command with shell disabled to prevent command injection
-  exec(command, { shell: false }, (error, stdout, stderr) => {
+  // Execute command with explicit array to prevent injection
+  exec([baseCommand, ...args].join(' '), { shell: false }, (error, stdout, stderr) => {
+    if (error) {
       console.error(`Execution error: ${error.message}`);
       return res.status(500).json({ error: "Command execution failed" });
     }
-
-    if (stderr) {
-      return res.status(400).json({ error: stderr });
-    }
-
-    res.json({ output: stdout });
-  });
 });
 
 // Start the server
