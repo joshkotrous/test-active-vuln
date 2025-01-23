@@ -11,4 +11,5 @@ jobs:
         uses: pensarai/scan-action@main
         with:
           api-key: ${{ secrets.PENSAR_API_KEY }}
+          environment: "dev"
         id: pensar-scan
