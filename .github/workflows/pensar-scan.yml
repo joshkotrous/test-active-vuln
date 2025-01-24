@@ -8,7 +8,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Run Pensar Security Scan
-        uses: pensarai/scan-action@main
+        uses: pensarai/scan-action@v1
         with:
           api-key: ${{ secrets.PENSAR_API_KEY }}
           environment: "dev"
